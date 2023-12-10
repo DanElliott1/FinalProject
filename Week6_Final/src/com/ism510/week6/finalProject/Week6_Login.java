@@ -20,6 +20,7 @@ import javax.swing.SwingConstants;
 
 public class Week6_Login {
 
+	// variables
 	public static String[] usernames = { "Admin", "Vale.Vicky", "Lane.Lois", "Kent.Clark", "Wayne.Bruce", "Parker.Peter", "Rogers.Steve",
 			"Luther.Lex", "Osborn.Harry", "Prince.Diana", "Linda.Zoel" };
 	public String[] passwords = { "Password1", "NwiKFnBUIo", "swShkBOGev", "dCzNjcTvSn", "uLqsQzygsJ", "YSGfWKKegc", "IkpZUeqkHB", "YoTCIbJSno",
@@ -29,6 +30,7 @@ public class Week6_Login {
 	public Boolean[] isAdmin = { true, true, false, false, false, false, false, true, false, false, false };
 	public String[] currentUser = new String[3];
 
+	// classes
 	private JFrame frmLogin;
 	private JTextField usernameField;
 	private JPasswordField passwordField;
@@ -111,6 +113,7 @@ public class Week6_Login {
 		submitButton.setBounds(157, 170, 85, 25);
 		frmLogin.getContentPane().add(submitButton);
 
+		// key listener for enabling the password field while username field is blank.
 		usernameField.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent e) {
 				passwordField.setEnabled(usernameField.getText().length() >= 0);
@@ -129,6 +132,7 @@ public class Week6_Login {
 			}
 		});
 
+		// key listener for enabling the submit button while password field is blank.
 		passwordField.addKeyListener(new KeyListener() {
 			public void keyTyped(KeyEvent e) {
 				submitButton.setEnabled(passwordField.getPassword().length >= 0);
@@ -147,31 +151,45 @@ public class Week6_Login {
 			}
 		});
 
+		// action lister on submit button
 		submitButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent Clicked) {
+				// setup some variables
 				char[] userPass = passwordField.getPassword();
 				String userPassStr = String.valueOf(userPass);
 				String userName = usernameField.getText();
 				int doNotShowMsg = 0;
+				// left over from previous work, but if you type close/Close/Close as username
+				// (with a character in the pw field, app will close).
 				if (userName.toLowerCase().equals("close")) {
 					System.exit(0);
 				} else {
+					// for loop through username array
 					for (int index = 0; index < usernames.length; index++) {
+						// validate username and password at "index" match what user submitted & check
+						// if user is locked out
 						if (userName.equalsIgnoreCase(usernames[index]) && userPassStr.equals(passwords[index]) && lockedOut[index] == false) {
+							// setup currentUser array if conditions above are met.
 							currentUser[0] = usernames[index];
 							currentUser[1] = isAdmin[index].toString();
 							currentUser[2] = Instant.now().truncatedTo(ChronoUnit.SECONDS).toString();
+							// show success message
 							JOptionPane.showMessageDialog(frmLogin, "Login Successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
+							// after user hits "ok" launch app and pass some arrays.
 							Week6_App prApp = new Week6_App(usernames, lockedOut, isAdmin, currentUser);
 							prApp.payrollApp.setVisible(true);
+							// flag to not show wrong credential error
 							doNotShowMsg = 1;
+							// close login frame.
 							frmLogin.dispose();
 							break;
+							// hand locked out users.
 						} else if (userName.equalsIgnoreCase(usernames[index]) && lockedOut[index] == true) {
 							JOptionPane.showMessageDialog(frmLogin, "User is locked. Please contact the Helpdesk", "Error",
 									JOptionPane.ERROR_MESSAGE);
 							doNotShowMsg = 1;
 							break;
+							// handle locking out users due to too many bad password attempts.
 						} else if (userName.equalsIgnoreCase(usernames[index]) && !userPassStr.equals(passwords[index])) {
 							failCount[index]++;
 							if (failCount[index] > 4) {
@@ -184,6 +202,7 @@ public class Week6_Login {
 							break;
 						}
 					}
+					// throw this error if username isn't here, until user is locked.
 					if (doNotShowMsg < 1) {
 						JOptionPane.showMessageDialog(frmLogin, "Please check the provided credentials", "Error", JOptionPane.ERROR_MESSAGE);
 					}

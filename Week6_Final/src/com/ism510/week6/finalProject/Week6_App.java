@@ -242,8 +242,8 @@ public class Week6_App {
 	}
 
 	/**
-	 * Create the application.
-	 * 
+	 * Create the application. here is where the arrays come in from login screen.
+	 * reassign them and send them to initialize.
 	 */
 	public Week6_App(String[] usernames, Boolean[] lockedOut, Boolean[] isAdmin, String[] currentUser) {
 		String[] loginUsernames = usernames;
@@ -259,11 +259,14 @@ public class Week6_App {
 	 * Initialize the contents of the frame.
 	 */
 	public void initialize(String[] loginUsernames, Boolean[] loginLockedOut, Boolean[] loginIsAdmin, String[] loginCurrentUser) {
+		// setting up arrays again, this was the only way I could get the login
+		// app values here without just creating them at the top of file.
 		String[] usernames = loginUsernames;
 		Boolean[] isLockedOut = loginLockedOut;
 		Boolean[] isAdmin = loginIsAdmin;
 		String[] currentUser = loginCurrentUser;
 
+		// check if user isAdmin and enable admin tab if true.
 		Boolean enableAdminPage = false;
 		if (currentUser[1].toString() == "true") {
 			enableAdminPage = true;
@@ -274,12 +277,14 @@ public class Week6_App {
 		payrollApp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		payrollApp.getContentPane().setLayout(null);
 
+		// Current user from login displayed in lower right corner.
 		String CurrentUserStr = "Current User: " + currentUser[0].toString() + " | Logged on: " + currentUser[2].toString();
 		JLabel CurrentUserInfo = new JLabel(CurrentUserStr);
 		CurrentUserInfo.setHorizontalAlignment(SwingConstants.TRAILING);
 		CurrentUserInfo.setBounds(702, 451, 462, 21);
 		payrollApp.getContentPane().add(CurrentUserInfo);
 
+		// creates the tabbeed pane ( Employees / Payroll / Settings / Admin );
 		JTabbedPane payrollAppPane = new JTabbedPane(JTabbedPane.BOTTOM);
 		payrollAppPane.setBounds(10, 10, 1154, 464);
 		payrollApp.getContentPane().add(payrollAppPane);
@@ -297,6 +302,7 @@ public class Week6_App {
 		employeeTablePane.setBounds(29, 37, 876, 217);
 		employeePane.add(employeeTablePane);
 
+		// table for employee user management.
 		employeeTable = new JTable();
 		employeeTable.setAutoCreateRowSorter(true);
 		employeeTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -308,6 +314,7 @@ public class Week6_App {
 		employeeTable.setModel(new DefaultTableModel(empData, empHeaders));
 		employeeTablePane.setViewportView(employeeTable);
 
+		// edit existing employees
 		editEmp = new JButton("Edit Employee");
 		editEmp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -321,6 +328,7 @@ public class Week6_App {
 		editEmp.setBounds(957, 37, 160, 21);
 		employeePane.add(editEmp);
 
+		// add new employees (these will only exist while program is open).
 		addNewEmp = new JButton("Add New Employee");
 		addNewEmp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -332,6 +340,9 @@ public class Week6_App {
 		addNewEmp.setBounds(957, 74, 160, 21);
 		employeePane.add(addNewEmp);
 
+		// dropdown list of employees after clicking edit button (made more sense when
+		// only working with a handful of employees, added a lot more after everything
+		// was working)
 		empList = new JComboBox<String>();
 		empList.setBounds(29, 296, 135, 21);
 		empList.setVisible(false);
@@ -349,6 +360,7 @@ public class Week6_App {
 		});
 		employeePane.add(empList);
 
+		// labels above fields
 		empSelector = new JLabel("Select Employee");
 		empSelector.setBounds(29, 276, 135, 13);
 		empSelector.setVisible(false);
@@ -384,6 +396,9 @@ public class Week6_App {
 		empHoursWorkedLabel.setVisible(false);
 		employeePane.add(empHoursWorkedLabel);
 
+		// fields
+		// lots of listening here... wanted to ensure each field had text before
+		// enabling save...
 		empFirstName = new JTextField();
 		empFirstName.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
@@ -456,6 +471,7 @@ public class Week6_App {
 		empHoursWorked.setVisible(false);
 		employeePane.add(empHoursWorked);
 
+		// submit button, handles updating existing employee or adding new employee.
 		empSubmit = new JButton("Submit");
 		empSubmit.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -500,6 +516,7 @@ public class Week6_App {
 		empSubmit.setEnabled(false);
 		employeePane.add(empSubmit);
 
+		// cancel clears all fields and resets pane.
 		empCancel = new JButton("Cancel");
 		empCancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -523,20 +540,23 @@ public class Week6_App {
 		payrollAppPane.setSelectedIndex(1);
 		payrollPane.setLayout(null);
 
+		// list of employees from employee mgmt page (and an "all employees" option).
 		payrollEmpList = new JComboBox<String>();
 		payrollEmpList.setToolTipText("Please make a selection");
 		payrollEmpList.setBounds(27, 26, 135, 21);
 		payrollEmpList.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// not enabling run payroll report if selection is blank.
 				if (payrollEmpList.getSelectedIndex() >= 1) {
 					payrollRun.setEnabled(true);
 				} else {
-					// do something....
+					// do something.... (oops, I never got back to doing something here.)
 				}
 			}
 		});
 		payrollPane.add(payrollEmpList);
 
+		// labels
 		payrollSelectEmp = new JLabel("Select Employee");
 		payrollSelectEmp.setBounds(27, 10, 135, 13);
 		payrollPane.add(payrollSelectEmp);
@@ -546,23 +566,37 @@ public class Week6_App {
 		payrollOutputKey.setBounds(921, 80, 218, 242);
 		payrollPane.add(payrollOutputKey);
 
+		// run payroll button, where most of the magic happens.
 		payrollRun = new JButton("Run Payroll");
 		payrollRun.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// clear error label from previous run
 				payrollErrorLbl.setVisible(false);
+				// since the list has a blank at 0, and all employees at 1,
+				// we minus 2 from index
 				int index = payrollEmpList.getSelectedIndex() - 2;
+				// if all employees was selected (index 1 minus 2 == -1)
 				if (index == -1) {
+					// left some null indexes so people to add employees
+					// without resizing the object array...
+					// so we must handle removing those for what is about to happen.
 					int lastNonNull = empData.length;
 					for (int trim = 0; trim < empData.length; trim++) {
 						if (empData[trim][0] == null) {
 							lastNonNull--;
 						}
 					}
+					// now that are nulls are gone.. we can set the new array to the
+					// "trimmed" length of the original
 					Object[][] selectedEmpData = new Object[lastNonNull][empData[0].length];
+					// start looping through and adding employees.
 					for (int newIndex = 0; newIndex < lastNonNull; newIndex++) {
 						selectedEmpData[newIndex] = empData[newIndex];
 					}
+					// call method for running the payroll maths with all employees.
 					payrollEmpSelected(selectedEmpData);
+					// if index is 0 or great, individual employee was selected, so extract
+					// single employee data to new array
 				} else if (index >= 0) {
 					Object[][] selectedEmpData = new Object[1][empData[0].length];
 					selectedEmpData[0][0] = empData[index][0];
@@ -571,9 +605,10 @@ public class Week6_App {
 					selectedEmpData[0][3] = empData[index][3];
 					selectedEmpData[0][4] = empData[index][4];
 					selectedEmpData[0][5] = empData[index][5];
+					// call method for running payroll maths with single employee
 					payrollEmpSelected(selectedEmpData);
 				} else {
-					// throw error
+					// throw error (another oops... never got back here...)
 				}
 
 			}
@@ -582,17 +617,20 @@ public class Week6_App {
 		payrollRun.setEnabled(false);
 		payrollPane.add(payrollRun);
 
+		// pane for to make table display-able.
 		payrollOutputPane = new JScrollPane();
 		payrollOutputPane.setVisible(false);
 		payrollOutputPane.setBounds(27, 80, 887, 305);
 		payrollPane.add(payrollOutputPane);
 
+		// the report table
 		payrollOutput = new JTable();
 		payrollOutput.setAutoCreateRowSorter(true);
 		payrollOutput.setVisible(false);
 		payrollOutput.setEnabled(false);
 		payrollOutputPane.setViewportView(payrollOutput);
 
+		// error label that gets called if employees worked over 60 hours.
 		payrollErrorLbl = new JLabel();
 		payrollErrorLbl.setHorizontalAlignment(SwingConstants.CENTER);
 		payrollErrorLbl.setForeground(new Color(255, 0, 0));
@@ -608,6 +646,7 @@ public class Week6_App {
 		payrollAppPane.setEnabledAt(2, true);
 		settingsPane.setLayout(null);
 
+		// labels
 		taxRateLbl = new JLabel("Tax Rate (%)");
 		taxRateLbl.setBounds(391, 139, 110, 13);
 		settingsPane.add(taxRateLbl);
@@ -624,6 +663,7 @@ public class Week6_App {
 		maxHoursLbl.setBounds(391, 318, 110, 13);
 		settingsPane.add(maxHoursLbl);
 
+		// fields
 		taxRateField = new JTextField();
 		taxRateField.setHorizontalAlignment(SwingConstants.CENTER);
 		taxRateField.setEditable(false);
@@ -676,6 +716,7 @@ public class Week6_App {
 		});
 		settingsPane.add(maxHoursField);
 
+		// buttons
 		editSettingBtn = new JButton("Edit");
 		editSettingBtn.setBounds(672, 186, 110, 21);
 		editSettingBtn.addActionListener(new ActionListener() {
@@ -700,6 +741,8 @@ public class Week6_App {
 		});
 		settingsPane.add(cancelSettingBtn);
 
+		// note, if you change these from apps defaut settings,
+		// they will be used when payroll report is run
 		saveSettingBtn = new JButton("Save");
 		saveSettingBtn.setBounds(672, 216, 110, 21);
 		saveSettingBtn.setVisible(false);
@@ -725,6 +768,7 @@ public class Week6_App {
 		payrollAppPane.setEnabledAt(3, enableAdminPage);
 		adminPane.setLayout(null);
 
+		// admin users from login page
 		adminUserList = new JList<String>();
 		adminUserList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		adminUserList.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
@@ -740,6 +784,7 @@ public class Week6_App {
 		});
 		adminPane.add(adminUserList);
 
+		// labels
 		adminUserLbl = new JLabel("Users");
 		adminUserLbl.setBounds(56, 90, 45, 13);
 		adminPane.add(adminUserLbl);
@@ -748,6 +793,7 @@ public class Week6_App {
 		adminUsernameLbl.setBounds(275, 186, 92, 13);
 		adminPane.add(adminUsernameLbl);
 
+		// fields
 		adminUsernameField = new JTextField();
 		adminUsernameField.setEnabled(false);
 		adminUsernameField.setBounds(274, 201, 96, 19);
@@ -774,7 +820,8 @@ public class Week6_App {
 			}
 		});
 		adminPane.add(adminLockedOutChck);
-
+		// buttons (these really don't do much, just give illusion of doing
+		// something...)
 		adminSaveBtn = new JButton("Save");
 		adminSaveBtn.setEnabled(false);
 		adminSaveBtn.setBounds(411, 200, 110, 21);
@@ -863,17 +910,29 @@ public class Week6_App {
 	//
 	// Payroll Tab - Methods
 	//
+	// here is all the sauce for the rest of the payroll calculation.
 	private void payrollEmpSelected(Object[][] selectedEmpData) {
+		// create some placeholders
 		Object[][] payrollSelectedEmp = new Object[selectedEmpData.length][9];
 		double hoursWorked = 0;
 		double overtimeHoursWorked = 0;
+		Double maxWeeklyHours = Double.parseDouble(settingsValues[3]);
 		Double overtimeRate = Double.parseDouble(settingsValues[2]);
+		Double regHoursCap = Double.parseDouble(settingsValues[1]);
 		Double taxRate = (Double.parseDouble(settingsValues[0]) / 100);
+		// for looping through incoming arrays
 		for (int employee = 0; employee < selectedEmpData.length; employee++) {
 			hoursWorked = Double.parseDouble(selectedEmpData[employee][5].toString());
-			if (selectedEmpData[employee][0] != null && hoursWorked <= Double.parseDouble(settingsValues[3])) {
-				if (hoursWorked > 40.0) {
-					hoursWorked = 40.0;
+			// ^ set out hours worked var, v confirm employee is not null (never removed
+			// that...), and they haven't worked more than
+			// "60" hours/maxWeeklyHours (or whatever someone may have set it to...
+			if (selectedEmpData[employee][0] != null && hoursWorked <= maxWeeklyHours) {
+				// now we have employees who worked "60"/maxWeeklyHours hours or less
+				// breaking out the employees who worked over "40"/ hours.
+				if (hoursWorked > regHoursCap) {
+					hoursWorked = regHoursCap;
+					// maths for getting values to 2 decimals and for building the output data of
+					// the report.
 					overtimeHoursWorked = Math.round(
 							(Double.parseDouble(selectedEmpData[employee][5].toString()) - Double.parseDouble(settingsValues[1])) * 100.0) / 100.0;
 					String employeeName = selectedEmpData[employee][0].toString() + " " + selectedEmpData[employee][1].toString();
@@ -883,6 +942,7 @@ public class Week6_App {
 					Double taxes = Math.round((grossPay * taxRate) * 100.0) / 100.0;
 					Double netPay = Math.round((grossPay - taxes) * 100.0) / 100.0;
 					Double totalHoursWorked = Double.parseDouble(selectedEmpData[employee][5].toString());
+					// build array with overtime employee
 					payrollSelectedEmp[employee][0] = employeeName;
 					payrollSelectedEmp[employee][1] = hoursWorked;
 					payrollSelectedEmp[employee][2] = payRate;
@@ -893,6 +953,7 @@ public class Week6_App {
 					payrollSelectedEmp[employee][7] = taxes;
 					payrollSelectedEmp[employee][8] = netPay;
 				} else {
+					// non-overtime employees have a bit less maths.
 					hoursWorked = Double.parseDouble(selectedEmpData[employee][5].toString());
 					String employeeName = selectedEmpData[employee][0].toString() + " " + selectedEmpData[employee][1].toString();
 					Double payRate = Double.parseDouble(selectedEmpData[employee][2].toString());
@@ -900,6 +961,7 @@ public class Week6_App {
 					Double taxes = Math.round((grossPay * taxRate) * 100.0) / 100.0;
 					Double netPay = Math.round((grossPay - taxes) * 100.0) / 100.0;
 					Double totalHoursWorked = Double.parseDouble(selectedEmpData[employee][5].toString());
+					// build array with non-overtime employee
 					payrollSelectedEmp[employee][0] = employeeName;
 					payrollSelectedEmp[employee][1] = hoursWorked;
 					payrollSelectedEmp[employee][2] = payRate;
@@ -911,30 +973,37 @@ public class Week6_App {
 					payrollSelectedEmp[employee][8] = netPay;
 				}
 			} else {
+				// employees who worked over 60/
 				String employeeName = selectedEmpData[employee][0].toString() + " " + selectedEmpData[employee][1].toString();
+				Double totalHoursWorked = Double.parseDouble(selectedEmpData[employee][5].toString());
 				String error = "ERROR";
 				payrollSelectedEmp[employee][0] = employeeName;
 				payrollSelectedEmp[employee][1] = selectedEmpData[employee][5];
 				payrollSelectedEmp[employee][1] = selectedEmpData[employee][2];
 				payrollSelectedEmp[employee][3] = error;
 				payrollSelectedEmp[employee][4] = error;
-				payrollSelectedEmp[employee][5] = error;
+				payrollSelectedEmp[employee][5] = totalHoursWorked;
 				payrollSelectedEmp[employee][6] = error;
 				payrollSelectedEmp[employee][7] = error;
 				payrollSelectedEmp[employee][8] = error;
+				// throw error above report and make it visible.
 				payrollErrorLbl.setText(" !! Warning: Payroll Report Finished with Errors !! ");
 				payrollErrorLbl.setVisible(true);
 
 			}
 		}
 
+		// report headers and key
 		String[] payrollHeaders = { "Employee Name", "HWR", "PRR", "HWOT", "PROT", "HWT", "GP", "ID", "NP" };
 		String payrollOutputKeyStr = "<html>Key: <br>" + "HWR - Hours Worked, Reg<br>" + "PRR - Pay Rate, Reg<br>" + "HWOT - Hours Worked, O.T<br>"
 				+ "PROT - Pay Rate, O.T<br>" + "HWT - Hours Worked, Total<br>" + "GP - Gross Pay<br>"
 				+ "ID - Itemized Deductions (inc Federal, Medicare, FICA)<br>" + "NP - Net Pay</html>";
 
+		// report data and headers set.
 		payrollOutput.setModel(new DefaultTableModel(payrollSelectedEmp, payrollHeaders));
+		// key set
 		payrollOutputKey.setText(payrollOutputKeyStr);
+		// display it all to screen
 		payrollOutputPane.setVisible(true);
 		payrollOutput.setVisible(true);
 		payrollOutputKey.setVisible(true);
@@ -993,9 +1062,12 @@ public class Week6_App {
 	//
 	// Shared Methods
 	//
+	// reused method for creating employee dropdown menus (JComboBoxes
 	private void empListMaker() {
 		String[] employees = new String[empData.length];
 		String[] empShortList = null;
+		// start extracting non-null records from array (oversized initial array so we
+		// don't have to resize it.
 		for (int index = 0; index < empData.length; index++) {
 			if (empData[index][0] != null || empData[index][1] != null) {
 				employees[index] = empData[index][0].toString() + " " + empData[index][1].toString();
@@ -1003,18 +1075,24 @@ public class Week6_App {
 				break;
 			}
 		}
+		// find the end the main array (might grow if users get added)
 		int lastNonNull = empData.length;
 		for (int trim = 0; trim < employees.length; trim++) {
 			if (employees[trim] == null) {
 				lastNonNull--;
 			}
 		}
+		// ^ now we know the true length.
+		// v lets start populating the lists.
 		empShortList = Arrays.copyOf(employees, lastNonNull);
+		// since lists have already been populated, we clear them
 		empList.removeAllItems();
 		payrollEmpList.removeAllItems();
+		// add our blank placeholder at 0, and all employees at 1 (for payroll)
 		empList.addItem(null);
 		payrollEmpList.addItem(null);
 		payrollEmpList.addItem("All Employees");
+		// re-populate lists
 		for (String emp : empShortList) {
 			empList.addItem(emp);
 			payrollEmpList.addItem(emp);
