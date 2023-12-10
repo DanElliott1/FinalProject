@@ -1,2 +1,2 @@
 # FinalProject
-put this together class
+put this together for class
