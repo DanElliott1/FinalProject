@@ -8,7 +8,9 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.NumberFormat;
 import java.util.Arrays;
+import java.util.Locale;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -942,16 +944,17 @@ public class Week6_App {
 					Double taxes = Math.round((grossPay * taxRate) * 100.0) / 100.0;
 					Double netPay = Math.round((grossPay - taxes) * 100.0) / 100.0;
 					Double totalHoursWorked = Double.parseDouble(selectedEmpData[employee][5].toString());
+					NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.US);
 					// build array with overtime employee
 					payrollSelectedEmp[employee][0] = employeeName;
 					payrollSelectedEmp[employee][1] = hoursWorked;
-					payrollSelectedEmp[employee][2] = payRate;
+					payrollSelectedEmp[employee][2] = nf.format(payRate);
 					payrollSelectedEmp[employee][3] = overtimeHoursWorked;
-					payrollSelectedEmp[employee][4] = overtimePayRate;
+					payrollSelectedEmp[employee][4] = nf.format(overtimePayRate);
 					payrollSelectedEmp[employee][5] = totalHoursWorked;
-					payrollSelectedEmp[employee][6] = grossPay;
-					payrollSelectedEmp[employee][7] = taxes;
-					payrollSelectedEmp[employee][8] = netPay;
+					payrollSelectedEmp[employee][6] = nf.format(grossPay);
+					payrollSelectedEmp[employee][7] = nf.format(taxes);
+					payrollSelectedEmp[employee][8] = nf.format(netPay);
 				} else {
 					// non-overtime employees have a bit less maths.
 					hoursWorked = Double.parseDouble(selectedEmpData[employee][5].toString());
@@ -961,16 +964,17 @@ public class Week6_App {
 					Double taxes = Math.round((grossPay * taxRate) * 100.0) / 100.0;
 					Double netPay = Math.round((grossPay - taxes) * 100.0) / 100.0;
 					Double totalHoursWorked = Double.parseDouble(selectedEmpData[employee][5].toString());
+					NumberFormat nf = NumberFormat.getCurrencyInstance(Locale.US);
 					// build array with non-overtime employee
 					payrollSelectedEmp[employee][0] = employeeName;
 					payrollSelectedEmp[employee][1] = hoursWorked;
-					payrollSelectedEmp[employee][2] = payRate;
-					payrollSelectedEmp[employee][3] = 0;
-					payrollSelectedEmp[employee][4] = 0;
+					payrollSelectedEmp[employee][2] = nf.format(payRate);
+					payrollSelectedEmp[employee][3] = "--";
+					payrollSelectedEmp[employee][4] = "--";
 					payrollSelectedEmp[employee][5] = totalHoursWorked;
-					payrollSelectedEmp[employee][6] = grossPay;
-					payrollSelectedEmp[employee][7] = taxes;
-					payrollSelectedEmp[employee][8] = netPay;
+					payrollSelectedEmp[employee][6] = nf.format(grossPay);
+					payrollSelectedEmp[employee][7] = nf.format(taxes);
+					payrollSelectedEmp[employee][8] = nf.format(netPay);
 				}
 			} else {
 				// employees who worked over 60/
@@ -980,12 +984,12 @@ public class Week6_App {
 				payrollSelectedEmp[employee][0] = employeeName;
 				payrollSelectedEmp[employee][1] = selectedEmpData[employee][5];
 				payrollSelectedEmp[employee][1] = selectedEmpData[employee][2];
-				payrollSelectedEmp[employee][3] = error;
-				payrollSelectedEmp[employee][4] = error;
-				payrollSelectedEmp[employee][5] = totalHoursWorked;
-				payrollSelectedEmp[employee][6] = error;
-				payrollSelectedEmp[employee][7] = error;
-				payrollSelectedEmp[employee][8] = error;
+				payrollSelectedEmp[employee][3] = "!! " + error + " !!";
+				payrollSelectedEmp[employee][4] = "!! " + error + " !!";
+				payrollSelectedEmp[employee][5] = "!! " + totalHoursWorked + " !!";
+				payrollSelectedEmp[employee][6] = "!! " + error + " !!";
+				payrollSelectedEmp[employee][7] = "!! " + error + " !!";
+				payrollSelectedEmp[employee][8] = "!! " + error + " !!";
 				// throw error above report and make it visible.
 				payrollErrorLbl.setText(" !! Warning: Payroll Report Finished with Errors !! ");
 				payrollErrorLbl.setVisible(true);
